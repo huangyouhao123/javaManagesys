@@ -1,7 +1,9 @@
 package com.freshfish.telisawebmanagement.mapper;
 
 import com.freshfish.telisawebmanagement.entity.EmpQueryParam;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import com.freshfish.telisawebmanagement.entity.Emp;
 
@@ -19,4 +21,5 @@ public interface EmpMapper {
 //    List<Emp> getList(Integer start, Integer pageSize, String name, Integer gender, LocalDate begin, LocalDate end);
     List<Emp> getList(EmpQueryParam empQueryParam);
 
+    void insert(Emp emp);
 }

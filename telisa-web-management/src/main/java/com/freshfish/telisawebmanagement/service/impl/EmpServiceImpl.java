@@ -1,20 +1,30 @@
 package com.freshfish.telisawebmanagement.service.impl;
 
-import com.freshfish.telisawebmanagement.entity.Emp;
-import com.freshfish.telisawebmanagement.entity.EmpQueryParam;
-import com.freshfish.telisawebmanagement.entity.PageResult;
+import com.freshfish.telisawebmanagement.entity.*;
+import com.freshfish.telisawebmanagement.mapper.EmpExprMapper;
 import com.freshfish.telisawebmanagement.mapper.EmpMapper;
+import com.freshfish.telisawebmanagement.service.EmpLogService;
 import com.freshfish.telisawebmanagement.service.EmpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class EmpServiceImpl implements EmpService {
+
+    @Autowired
+    private EmpLogService empLogService;
+
     @Autowired
     private EmpMapper empMapper;
+
+    @Autowired
+    private EmpExprMapper empExprMapper;
 
     @Override
     public PageResult<Emp> page(EmpQueryParam empQueryParam){
@@ -27,16 +37,27 @@ public class EmpServiceImpl implements EmpService {
         pageResult.setRows(rows);
         return pageResult;
     }
-//    @Override
-//    public PageResult<Emp> page(Integer page, Integer pageSize,String name, Integer gender,
-//                                LocalDate begin,
-//                                LocalDate end){
-//        Long total = empMapper.getTotal();
-//        Integer start=(page-1)*pageSize;
-//        List<Emp> rows = empMapper.getList(start, pageSize, name, gender, begin, end);
-//        PageResult<Emp> pageResult=new PageResult<Emp>();
-//        pageResult.setTotal(total);
-//        pageResult.setRows(rows);
-//        return pageResult;
-//    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void save(Emp emp){
+        try {
+            emp.setCreateTime(LocalDateTime.now());
+            emp.setUpdateTime(LocalDateTime.now());
+            empMapper.insert(emp);
+
+            List<EmpExpr>exprList = emp.getExprList();
+            if(!CollectionUtils.isEmpty(exprList)){
+                exprList.forEach(expr->{
+                    expr.setEmpId(emp.getId());
+                });
+                empExprMapper.insertBatch(exprList);
+            }
+        } finally {
+            EmpLog empLog =new EmpLog(null, LocalDateTime.now(), "保存员工信息："+emp);
+            empLogService.insertLog(empLog);
+        }
+
+
+    }
 }

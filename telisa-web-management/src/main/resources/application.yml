@@ -15,3 +15,5 @@ mybatis:
 logging:
   level:
     com.telisa: debug
+    org.springframework.jdbc.support.JdbcTransactionManager: debug
+
