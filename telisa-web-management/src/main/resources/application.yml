@@ -17,3 +17,8 @@ logging:
     com.telisa: debug
     org.springframework.jdbc.support.JdbcTransactionManager: debug
 
+aliyun:
+    oss:
+      endpoint: https://oss-cn-beijing.aliyuncs.com
+      bucketName: javaweb-study-ff
+      region: cn-beijing

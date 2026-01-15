@@ -12,4 +12,9 @@ public interface EmpService {
 
     void save(Emp emp);
 
+    void deleteByIds(Integer[] ids);
+
+    Emp getById(Integer id);
+
+    void update(Emp emp);
 }

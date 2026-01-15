@@ -22,4 +22,10 @@ public interface EmpMapper {
     List<Emp> getList(EmpQueryParam empQueryParam);
 
     void insert(Emp emp);
+
+    void deleteByIds(Integer[] ids);
+
+    Emp getById(Integer id);
+
+    void updateById(Emp emp);
 }

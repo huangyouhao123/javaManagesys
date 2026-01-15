@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @RestController
 @Slf4j
@@ -35,4 +37,24 @@ public class EmpController {
         return Result.success();
     }
 
+    @DeleteMapping
+    public Result delete(Integer[] ids){
+        log.info("删除员工,员工id: {}", Arrays.toString(ids));
+        empService.deleteByIds(ids);
+        return Result.success();
+    }
+
+    @GetMapping("/{id}")
+    public Result getInfo(@PathVariable("id") Integer id){
+        log.info("查询员工数据{}", id);
+        Emp emp =  empService.getById(id);
+        return Result.success(emp);
+    }
+
+    @PutMapping
+    public Result update(@RequestBody Emp emp){
+        log.info("更新员工,员工信息: {}", emp);
+        empService.update(emp);
+        return Result.success();
+    }
 }
