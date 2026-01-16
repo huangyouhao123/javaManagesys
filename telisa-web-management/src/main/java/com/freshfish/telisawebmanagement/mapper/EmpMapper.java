@@ -1,11 +1,9 @@
 package com.freshfish.telisawebmanagement.mapper;
 
 import com.freshfish.telisawebmanagement.entity.EmpQueryParam;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import com.freshfish.telisawebmanagement.entity.Emp;
+import java.util.Map;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,4 +26,12 @@ public interface EmpMapper {
     Emp getById(Integer id);
 
     void updateById(Emp emp);
+
+    @MapKey("pos")
+    List<Map<String, Object>> countEmpJobData();
+
+    @MapKey("name")
+    List<Map<String, Object>> countEmpGenderData();
+
+    List<Emp> list();
 }

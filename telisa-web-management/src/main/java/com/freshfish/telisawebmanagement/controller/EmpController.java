@@ -14,6 +14,7 @@ import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -56,5 +57,12 @@ public class EmpController {
         log.info("更新员工,员工信息: {}", emp);
         empService.update(emp);
         return Result.success();
+    }
+
+    @GetMapping("/list")
+    public Result list(){
+        log.info("查询员工列表");
+        List<Emp> list = empService.list();
+        return Result.success(list);
     }
 }

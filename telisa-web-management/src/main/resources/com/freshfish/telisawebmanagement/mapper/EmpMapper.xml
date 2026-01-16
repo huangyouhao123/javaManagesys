@@ -54,7 +54,7 @@
     </delete>
 
     <select id="getList" resultType="com.freshfish.telisawebmanagement.entity.Emp">
-        select e.*,d.name from emp e left join dept d on e.dept_id=d.id
+        select e.*,d.name from emp e left join emp d on e.id=d.id
         <where>
             <if test="name!=null and name!=''">
                 e.name like concat('%',#{name},'%')
@@ -105,5 +105,24 @@
             ee.company ee_company,
             ee.job ee_job
         from emp e left join emp_expr ee on e.id = ee.emp_id where e.id= #{id};
+    </select>
+    <select id="countEmpJobData" resultType="java.util.Map">
+        select
+            case job when 1 then '班主任'
+                     when 2 then '讲师'
+                     when 3 then '学工主管'
+                     when 4 then '教研主管'
+                     when 5 then '咨询师'
+                     else '其他' end as pos,
+            count(*) num
+        from emp group by pos order by num;
+    </select>
+    <select id="countEmpGenderData" resultType="java.util.Map">
+        select
+            if(gender =1 ,'男','女') as name,
+            count(*) as value from emp group by gender;
+    </select>
+    <select id="list" resultType="com.freshfish.telisawebmanagement.entity.Emp">
+        select id,name from emp
     </select>
 </mapper>

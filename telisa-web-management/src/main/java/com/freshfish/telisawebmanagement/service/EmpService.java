@@ -6,6 +6,7 @@ import com.freshfish.telisawebmanagement.entity.PageResult;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface EmpService {
     PageResult<Emp> page(EmpQueryParam empQueryParam);
@@ -17,4 +18,6 @@ public interface EmpService {
     Emp getById(Integer id);
 
     void update(Emp emp);
+
+    List<Emp> list();
 }

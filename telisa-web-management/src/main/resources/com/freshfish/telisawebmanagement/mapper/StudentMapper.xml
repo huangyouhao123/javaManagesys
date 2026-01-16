@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.freshfish.telisawebmanagement.mapper.StudentMapper">
+    <!-- 结果映射：解决字段名和实体类属性名不一致的问题（如clazz_name对应clazzName） -->
+    <resultMap id="StudentResultMap" type="com.freshfish.telisawebmanagement.entity.Student">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="no" property="no"/>
+        <result column="gender" property="gender"/>
+        <result column="phone" property="phone"/>
+        <result column="degree" property="degree"/>
+        <result column="id_card" property="idCard"/>
+        <result column="is_college" property="isCollege"/>
+        <result column="address" property="address"/>
+        <result column="graduation_date" property="graduationDate"/>
+        <result column="violation_count" property="violationCount"/>
+        <result column="violation_score" property="violationScore"/>
+        <result column="clazz_id" property="clazzId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="clazz_name" property="clazzName"/> <!-- 关联查询的班级名称 -->
+    </resultMap>
+    <insert id="insert">
+        INSERT INTO student(name, no, gender, phone, degree, id_card, is_college, address, graduation_date, violation_count, violation_score, clazz_id, create_time, update_time)
+        VALUES (#{name}, #{no}, #{gender}, #{phone}, #{degree}, #{idCard}, #{isCollege}, #{address}, #{graduationDate}, #{violationCount}, #{violationScore}, #{clazzId}, #{createTime}, #{updateTime})
+    </insert>
+    <update id="update">
+        UPDATE student
+        <set>
+            <!-- 姓名：有值才更新 -->
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <!-- 学号：有值才更新 -->
+            <if test="no != null and no != ''">
+                no = #{no},
+            </if>
+            <!-- 性别：数值类型，只判断非null -->
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <!-- 手机号：有值才更新 -->
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <!-- 学历：数值类型，只判断非null -->
+            <if test="degree != null">
+                degree = #{degree},
+            </if>
+            <!-- 身份证号：有值才更新 -->
+            <if test="idCard != null and idCard != ''">
+                id_card = #{idCard},
+            </if>
+            <!-- 是否在校：数值类型，只判断非null -->
+            <if test="isCollege != null">
+                is_college = #{isCollege},
+            </if>
+            <!-- 地址：有值才更新 -->
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <!-- 毕业日期：日期类型，只判断非null -->
+            <if test="graduationDate != null">
+                graduation_date = #{graduationDate},
+            </if>
+            <!-- 违规次数：数值类型，只判断非null -->
+            <if test="violationCount != null">
+                violation_count = #{violationCount},
+            </if>
+            <!-- 违规分数：数值类型，只判断非null -->
+            <if test="violationScore != null">
+                violation_score = #{violationScore},
+            </if>
+            <!-- 班级ID：数值类型，只判断非null -->
+            <if test="clazzId != null">
+                clazz_id = #{clazzId},
+            </if>
+            <!-- 更新时间：强制更新（建议后端统一设置，无需前端传） -->
+            update_time = #{updateTime},
+        </set>
+        <!-- 固定条件：更新指定ID的学生（id必传） -->
+        WHERE id = #{id}
+    </update>
+    <update id="updateVoilation">
+        UPDATE student
+        SET
+        violation_count = #{violationCount},
+        violation_score = #{violationScore},
+        update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteByIds">
+        DELETE FROM student WHERE id IN
+        <foreach item="id" collection="ids" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 动态查询学生列表 -->
+    <select id="getList" resultMap="StudentResultMap">
+        SELECT
+        s.id, s.name, s.no, s.gender, s.phone, s.degree,
+        s.id_card, s.is_college, s.address, s.graduation_date,
+        s.violation_count, s.violation_score, s.clazz_id,
+        s.create_time, s.update_time, c.name as clazz_name
+        FROM student s
+        LEFT JOIN tlias.clazz c ON c.id = s.clazz_id
+        WHERE 1=1  <!-- 固定1=1，方便拼接AND条件 -->
+        <!-- 动态条件1：班级名称模糊查询（有值才加） -->
+        <if test="name != null and name != ''">
+            AND c.name LIKE CONCAT('%', #{name}, '%')
+        </if>
+        <!-- 动态条件2：学历精确匹配（有值才加） -->
+        <if test="degree != null">
+            AND s.degree = #{degree}
+        </if>
+        <!-- 动态条件3：班级ID精确匹配（有值才加） -->
+        <if test="clazzId != null">
+            AND s.clazz_id = #{clazzId}
+        </if>
+        <!-- 动态分页：参数合法才加（避免null） -->
+        order by s.update_time DESC
+        <if test="page != null and pageSize != null and page > 0 and pageSize > 0">
+            LIMIT #{start}, #{pageSize}
+        </if>
+
+    </select>
+    <select id="getById" resultType="com.freshfish.telisawebmanagement.entity.Student">
+        SELECT
+        id, name, no, gender, phone, degree,
+        id_card, is_college, address, graduation_date,
+        violation_count, violation_score, clazz_id,
+        create_time, update_time
+        FROM student
+        WHERE id = #{id}
+    </select>
+    <select id="countStudentDegreeData" resultType="java.util.Map">
+        SELECT
+            CASE degree
+                WHEN 1 THEN '初中'
+                WHEN 2 THEN '高中'
+                WHEN 3 THEN '大专'
+                WHEN 4 THEN '本科'
+                WHEN 5 THEN '硕士'
+                ELSE '其他'
+                END AS name,
+            COUNT(*) AS value
+        FROM student
+        GROUP BY 1;
+    </select>
+    <select id="countStudentData" resultType="java.util.Map">
+        select
+            c.name as clazz_name,
+            count(student.id) as student_count
+        from student left join tlias.clazz c on c.id = student.clazz_id
+        group by c.name
+    </select>
+</mapper>
