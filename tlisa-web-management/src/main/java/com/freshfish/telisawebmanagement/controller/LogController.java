@@ -15,7 +15,6 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/log")
 public class LogController {
     /**
      * 测试日志
@@ -23,7 +22,7 @@ public class LogController {
     @Autowired
     private LogService logService;
 
-    @GetMapping("/page")
+    @GetMapping("/log/page")
     public Result page(LogQueryParam  param){
         Integer page = param.getPage();
         Integer pageSize = param.getPageSize();
@@ -31,4 +30,5 @@ public class LogController {
         List<Log> list = logService.page(page, pageSize);
         return Result.success(list);
     }
+
 }

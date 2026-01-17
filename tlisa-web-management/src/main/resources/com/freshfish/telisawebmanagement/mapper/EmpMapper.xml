@@ -125,4 +125,7 @@
     <select id="list" resultType="com.freshfish.telisawebmanagement.entity.Emp">
         select id,name from emp
     </select>
+    <select id="SelectByUsernameAndPassword" resultType="com.freshfish.telisawebmanagement.entity.Emp">
+        select id,username,name from emp where username=#{username} and password=#{password}
+    </select>
 </mapper>

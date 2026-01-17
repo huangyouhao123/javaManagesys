@@ -2,6 +2,7 @@ package com.freshfish.telisawebmanagement.service;
 
 import com.freshfish.telisawebmanagement.entity.Emp;
 import com.freshfish.telisawebmanagement.entity.EmpQueryParam;
+import com.freshfish.telisawebmanagement.entity.LoginInfo;
 import com.freshfish.telisawebmanagement.entity.PageResult;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -20,4 +21,6 @@ public interface EmpService {
     void update(Emp emp);
 
     List<Emp> list();
+
+    LoginInfo login(Emp emp);
 }
