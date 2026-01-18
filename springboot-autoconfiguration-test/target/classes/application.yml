@@ -1,0 +1,6 @@
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    bucketName: javaweb-study-ff
+    region: cn-beijing
+
